@@ -2,7 +2,20 @@ import React, { Component } from 'react'
 import NewsItem from './NewsItem'
 import axios from 'axios';
 import Spinner from './Spinner'
+import PropTypes from 'prop-types'
+import CategoryButton from './CategoryButton'
 export class News extends Component {
+    static defaultProps = {
+        country: 'in',
+        pageSize: 6,
+        category:"general"
+    }
+    static propTypes = {
+        country: PropTypes.string,
+        pageSize: PropTypes.number,
+        category: PropTypes.string
+    }
+
     constructor() {
         super();
         console.log("Hello I am a constructor");
@@ -13,48 +26,50 @@ export class News extends Component {
         }
     }
     async componentDidMount() {
-        let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=527270c2589c4957850b4bf25c8cef15&page=1&pageSize=${this.props.pageSize}`
-        this.setState({loading:true})
+        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=527270c2589c4957850b4bf25c8cef15&page=1&pageSize=${this.props.pageSize}`
+        this.setState({ loading: true })
         let data = await axios.get(url);
         let parsedData = await data.data;
         console.log(parsedData)
-        this.setState({ articles: parsedData.articles ,
-            totalResults:parsedData.totalResults,
-            loading:false 
+        this.setState({
+            articles: parsedData.articles,
+            totalResults: parsedData.totalResults,
+            loading: false
         })
     }
-     handleNextClick=async ()=>{
-        if(!(this.state.page+1 > Math.ceil(this.state.totalResults/this.props.pageSize))){  //checking if that page to which we are going to becomes greater than the total number of pages
-            let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=527270c2589c4957850b4bf25c8cef15&page=${this.state.page+1}&pageSize=${this.props.pageSize}`
-            this.setState({loading:true})
+    handleNextClick = async () => {
+        if (!(this.state.page + 1 > Math.ceil(this.state.totalResults / this.props.pageSize))) {  //checking if that page to which we are going to becomes greater than the total number of pages
+            let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=527270c2589c4957850b4bf25c8cef15&page=${this.state.page + 1}&pageSize=${this.props.pageSize}`
+            this.setState({ loading: true })
             let data = await axios.get(url);
             let parsedData = await data.data;
             console.log(parsedData)
             this.setState({
-                page:this.state.page+1,
+                page: this.state.page + 1,
                 articles: parsedData.articles,
-                loading:false
+                loading: false
             })
         }
-       
+
     }
-     handlePreviousClick=async()=>{
-        let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=527270c2589c4957850b4bf25c8cef15&page=${this.state.page-1}&pageSize=${this.props.pageSize}`
+    handlePreviousClick = async () => {
+        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=527270c2589c4957850b4bf25c8cef15&page=${this.state.page - 1}&pageSize=${this.props.pageSize}`
         let data = await axios.get(url);
-        this.setState({loading:true})
+        this.setState({ loading: true })
         let parsedData = await data.data;
         console.log(parsedData)
         this.setState({
-            page:this.state.page-1,
+            page: this.state.page - 1,
             articles: parsedData.articles,
-            loading:false
+            loading: false
         })
     }
     render() {
         return (
             <div className="container my-3">
-                <div className="row">
-                    {this.state.loading&&<Spinner/>}
+                <CategoryButton></CategoryButton>
+                <div className="row  my-5">
+                    {this.state.loading && <Spinner />}
                     {!this.state.loading && this.state.articles.map((element) => {
                         return (
                             <div key={element.url} className="col-md-4">
@@ -65,9 +80,9 @@ export class News extends Component {
                             </div>
                         )
                     })}
-                    <div className="container d-flex justify-content-between">
-                    <button type="button" disabled={this.state.page<=1} className="btn btn-dark" onClick={this.handlePreviousClick}> &larr; Previous</button>
-                    <button type="button" disabled={this.state.page+1 > Math.ceil(this.state.totalResults/this.props.pageSize)} className="btn btn-dark" onClick={this.handleNextClick}>Next &rarr;</button>
+                    <div className="container my-5 d-flex justify-content-between">
+                        <button type="button" disabled={this.state.page <= 1} className="btn btn-success" onClick={this.handlePreviousClick}> &larr; Previous</button>
+                        <button type="button" disabled={this.state.page + 1 > Math.ceil(this.state.totalResults / this.props.pageSize)} className="btn btn-success" onClick={this.handleNextClick}>Next &rarr;</button>
 
                     </div>
                 </div>
