@@ -26,7 +26,7 @@ export class News extends Component {
         }
     }
     async componentDidMount() {
-        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=527270c2589c4957850b4bf25c8cef15&page=1&pageSize=${this.props.pageSize}`
+        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=1&pageSize=${this.props.pageSize}`
         this.setState({ loading: true })
         let data = await axios.get(url);
         let parsedData = await data.data;
@@ -39,7 +39,7 @@ export class News extends Component {
     }
     handleNextClick = async () => {
         if (!(this.state.page + 1 > Math.ceil(this.state.totalResults / this.props.pageSize))) {  //checking if that page to which we are going to becomes greater than the total number of pages
-            let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=527270c2589c4957850b4bf25c8cef15&page=${this.state.page + 1}&pageSize=${this.props.pageSize}`
+            let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.page + 1}&pageSize=${this.props.pageSize}`
             this.setState({ loading: true })
             let data = await axios.get(url);
             let parsedData = await data.data;
@@ -53,7 +53,7 @@ export class News extends Component {
 
     }
     handlePreviousClick = async () => {
-        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=527270c2589c4957850b4bf25c8cef15&page=${this.state.page - 1}&pageSize=${this.props.pageSize}`
+        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.page - 1}&pageSize=${this.props.pageSize}`
         let data = await axios.get(url);
         this.setState({ loading: true })
         let parsedData = await data.data;

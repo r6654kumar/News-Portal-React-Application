@@ -8,20 +8,22 @@ import {
   Route,
 }from "react-router-dom";
 export class App extends Component {
+  pageSize=6;
+  apiKey=process.env.REACT_APP_NEWSPORTAL_API
   render() {
     return (
       <div>
         <Router>
             <Navbar></Navbar>
             <Routes>
-              <Route path="/" element={<News key="general" pageSize={6} country="in" category="general" />} />
-              <Route path="/general" element={<News key="general" pageSize={6} country="in" category="general"/>} />
-              <Route path="/business" element={<News key="business" pageSize={6} country="in" category="business" />} />
-              <Route path="/health" element={<News key="health" pageSize={6} country="in" category="health" />} />
-              <Route path="/entertainment" element={<News key="entertainment" pageSize={6} country="in" category="entertainment" />} />
-              <Route path="/science" element={<News  key="science" pageSize={6} country="in" category="science" />} />
-              <Route path="/sports" element={<News key="sports" pageSize={6} country="in" category="sports" />} />
-              <Route path="/technology" element={<News key="technology" pageSize={6} country="in" category="technology" />} />
+              <Route path="/" element={<News key="general" pageSize={this.pageSize} country="in" category="general" apiKey={this.apiKey}/>} />
+              <Route path="/general" element={<News key="general" pageSize={this.pageSize} country="in" category="general"apiKey={this.apiKey}/>} />
+              <Route path="/business" element={<News key="business" pageSize={this.pageSize} country="in" category="business" apiKey={this.apiKey}/>} />
+              <Route path="/health" element={<News key="health" pageSize={this.pageSize} country="in" category="health" apiKey={this.apiKey}/>} />
+              <Route path="/entertainment" element={<News key="entertainment" pageSize={this.pageSize} country="in" category="entertainment" apiKey={this.apiKey} />} />
+              <Route path="/science" element={<News  key="science" pageSize={this.pageSize} country="in" category="science" apiKey={this.apiKey}/>} />
+              <Route path="/sports" element={<News key="sports" pageSize={this.pageSize} country="in" category="sports" apiKey={this.apiKey} />} />
+              <Route path="/technology" element={<News key="technology" pageSize={this.pageSize} country="in" category="technology" apiKey={this.apiKey}/>} />
             </Routes>
         </Router>
       </div>
