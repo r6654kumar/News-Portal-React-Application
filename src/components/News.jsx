@@ -1,76 +1,44 @@
-import React, { Component } from 'react'
+import React, { useState,useEffect } from 'react'
 import NewsItem from './NewsItem'
 import axios from 'axios';
 import Spinner from './Spinner'
 import PropTypes from 'prop-types'
 import CategoryButton from './CategoryButton'
-export class News extends Component {
-    static defaultProps = {
-        country: 'in',
-        pageSize: 6,
-        category:"general"
-    }
-    static propTypes = {
-        country: PropTypes.string,
-        pageSize: PropTypes.number,
-        category: PropTypes.string
-    }
-
-    constructor() {
-        super();
-        console.log("Hello I am a constructor");
-        this.state = {
-            articles: [],
-            loading: false,
-            page: 1
-        }
-    }
-    async componentDidMount() {
-        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=1&pageSize=${this.props.pageSize}`
-        this.setState({ loading: true })
+const News = (props)=>{
+    const [articles,setArticles]=useState([])
+    const [loading,setLoading]=useState(true)
+    const [page,setPage]=useState(1)
+    const [totalResults,setTotalResults]=useState(0)
+   const updateNews= async()=>{
+        const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page}&pageSize=${props.pageSize}`
+        setLoading(true);
         let data = await axios.get(url);
         let parsedData = await data.data;
-        console.log(parsedData)
-        this.setState({
-            articles: parsedData.articles,
-            totalResults: parsedData.totalResults,
-            loading: false
-        })
+        console.log(parsedData);
+        setArticles(parsedData.articles)
+        setTotalResults(parsedData.totalResults)
+        setLoading(false)
     }
-    handleNextClick = async () => {
-        if (!(this.state.page + 1 > Math.ceil(this.state.totalResults / this.props.pageSize))) {  //checking if that page to which we are going to becomes greater than the total number of pages
-            let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.page + 1}&pageSize=${this.props.pageSize}`
-            this.setState({ loading: true })
-            let data = await axios.get(url);
-            let parsedData = await data.data;
-            console.log(parsedData)
-            this.setState({
-                page: this.state.page + 1,
-                articles: parsedData.articles,
-                loading: false
-            })
-        }
+    useEffect(()=>{
+        updateNews();
+    },[])
+
+    const handleNextClick = async () => {
+        setPage(page+1);
+        updateNews();
 
     }
-    handlePreviousClick = async () => {
-        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.page - 1}&pageSize=${this.props.pageSize}`
-        let data = await axios.get(url);
-        this.setState({ loading: true })
-        let parsedData = await data.data;
-        console.log(parsedData)
-        this.setState({
-            page: this.state.page - 1,
-            articles: parsedData.articles,
-            loading: false
-        })
+    const handlePreviousClick = async () => {
+        setPage(page-1);
+        updateNews();
+
     }
-    render() {
         return (
             <div className="container my-3">
                 <CategoryButton></CategoryButton>
                 <div className="row  my-5">
-                    {this.state.loading && <Spinner />}
-                    {!this.state.loading && this.state.articles.map((element) => {
+                    {loading && <Spinner />}
+                    {!loading && articles.map((element) => {
                         return (
                             <div key={element.url} className="col-md-4">
                                 <NewsItem title={element.title ? element.title : ""} description={element.description ? element.description : ""}
@@ -81,14 +49,24 @@ export class News extends Component {
                         )
                     })}
                     <div className="container my-5 d-flex justify-content-between">
-                        <button type="button" disabled={this.state.page <= 1} className="btn btn-success" onClick={this.handlePreviousClick}> &larr; Previous</button>
-                        <button type="button" disabled={this.state.page + 1 > Math.ceil(this.state.totalResults / this.props.pageSize)} className="btn btn-success" onClick={this.handleNextClick}>Next &rarr;</button>
+                        <button type="button" disabled={page <= 1} className="btn btn-success" onClick={handlePreviousClick}> &larr; Previous</button>
+                        <button type="button" disabled={page + 1 > Math.ceil(totalResults / props.pageSize)} className="btn btn-success" onClick={handleNextClick}>Next &rarr;</button>
 
                     </div>
                 </div>
             </div>
         )
     }
-}
 
+
+News.defaultProps = {
+    country: 'in',
+    pageSize: 6,
+    category:"general"
+}
+News. propTypes = {
+    country: PropTypes.string,
+    pageSize: PropTypes.number,
+    category: PropTypes.string
+}
 export default News
